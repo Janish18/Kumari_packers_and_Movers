@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root { color-scheme: light; }
+  .dark { color-scheme: dark; }
+  html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+  body { @apply bg-paper font-sans text-navy-900 antialiased dark:bg-navy-950 dark:text-navy-50; }
+  h1, h2, h3, h4 { @apply font-display tracking-tight; }
+  ::selection { @apply bg-brand-500 text-white; }
+  :focus-visible { @apply outline-none ring-2 ring-brand-500 ring-offset-2 ring-offset-white dark:ring-offset-navy-950; }
+  * { scrollbar-width: thin; scrollbar-color: theme(colors.navy.300) transparent; }
+  input[type='number']::-webkit-inner-spin-button { appearance: none; }
+}
+
+@layer components {
+  .btn { @apply relative inline-flex select-none items-center justify-center gap-2 overflow-hidden rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-200 active:scale-[.97] disabled:pointer-events-none disabled:opacity-60; }
+  .btn-primary { @apply bg-brand-500 text-white shadow-glow hover:-translate-y-0.5 hover:bg-brand-600; }
+  .btn-navy { @apply bg-navy-900 text-white shadow-glow-navy hover:-translate-y-0.5 hover:bg-navy-800 dark:bg-white dark:text-navy-900 dark:hover:bg-navy-50; }
+  .btn-outline { @apply border border-navy-200 bg-white/70 text-navy-900 backdrop-blur hover:border-brand-400 hover:text-brand-600 dark:border-navy-700 dark:bg-navy-900/60 dark:text-white; }
+  .btn-ghost { @apply text-navy-700 hover:bg-navy-100/70 dark:text-navy-100 dark:hover:bg-navy-800; }
+  .btn-danger { @apply bg-red-600 text-white hover:bg-red-700; }
+  .btn-sm { @apply rounded-lg px-3 py-1.5 text-xs; }
+  .btn-lg { @apply rounded-2xl px-7 py-3.5 text-base; }
+  .btn-shine::after { content: ''; @apply pointer-events-none absolute inset-y-0 left-0 w-1/5 animate-shine-sweep bg-white/25 blur-[3px]; }
+
+  .card { @apply rounded-2xl border border-navy-100 bg-white shadow-soft dark:border-navy-800 dark:bg-navy-900; }
+  .card-hover { @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lift; }
+  .glass { @apply border border-white/20 bg-white/10 shadow-glass backdrop-blur-xl; }
+  .glass-light { @apply border border-white/60 bg-white/70 shadow-soft backdrop-blur-xl dark:border-navy-700/60 dark:bg-navy-900/70; }
+
+  .input { @apply w-full rounded-xl border border-navy-200 bg-white px-4 py-2.5 text-sm text-navy-900 shadow-sm outline-none transition placeholder:text-navy-300 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/15 disabled:bg-navy-50 dark:border-navy-700 dark:bg-navy-900 dark:text-white dark:placeholder:text-navy-500 dark:disabled:bg-navy-800; }
+  .input-error { @apply border-red-400 focus:border-red-500 focus:ring-red-500/15; }
+  .label { @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-navy-500 dark:text-navy-300; }
+
+  .text-gradient { @apply bg-gradient-to-r from-brand-400 via-brand-500 to-amber-400 bg-clip-text text-transparent; }
+  .text-gradient-animated { @apply animate-gradient-x bg-gradient-to-r from-brand-400 via-amber-300 to-brand-500 bg-[length:200%_auto] bg-clip-text text-transparent; }
+  .eyebrow { @apply inline-flex items-center gap-2 rounded-full bg-brand-500/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-600 dark:text-brand-300; }
+  .section { @apply relative py-20 sm:py-28; }
+  .h-section { @apply text-3xl font-extrabold leading-tight sm:text-4xl lg:text-5xl; }
+
+  .road { background-image: repeating-linear-gradient(90deg, rgba(255,255,255,.7) 0 40px, transparent 40px 80px); background-size: 80px 4px; background-repeat: repeat-x; }
+  .skeleton { @apply relative overflow-hidden rounded-lg bg-navy-100 dark:bg-navy-800; }
+  .skeleton::after { content: ''; @apply absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent dark:via-white/10; }
+  .noise { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2'/></filter><rect width='160' height='160' filter='url(%23n)' opacity='.035'/></svg>"); }
+  .scrollbar-hide { scrollbar-width: none; }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+}
+
+@layer utilities {
+  .pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 0.5rem); }
+  .will-transform { will-change: transform, opacity; }
+}
+
+/* Reduced motion: honour the OS setting everywhere (Framer Motion is also set to reducedMotion="user"). */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}

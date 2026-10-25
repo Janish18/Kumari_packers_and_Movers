@@ -1,0 +1,51 @@
+# Local/staging stack. Put real secrets in .env (copied from .env.example) - never commit it.
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-kumari_movers}
+      MYSQL_USER: ${DB_USER:-kumari_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_0900_ai_ci"]
+    volumes: [dbdata:/var/lib/mysql]
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD --silent"]
+      interval: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_ENGINE: mysql
+      DB_HOST: db
+      CELERY_BROKER_URL: redis://redis:6379/0
+    depends_on:
+      db: { condition: service_healthy }
+    volumes: [media:/app/media]
+
+  worker:
+    build: ./backend
+    restart: unless-stopped
+    command: celery -A config worker -l info
+    env_file: .env
+    environment: { DB_ENGINE: mysql, DB_HOST: db, CELERY_BROKER_URL: "redis://redis:6379/0" }
+    depends_on: [backend, redis]
+
+  web:
+    build: ./frontend
+    restart: unless-stopped
+    ports: ["8080:80"]
+    depends_on: [backend]
+    volumes: ["media:/srv/media:ro"]
+
+volumes:
+  dbdata:
+  media:
